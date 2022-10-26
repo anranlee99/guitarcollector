@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Guitar Details</h1>
+
+<div class="row">
+  <div class="col s6">
+    <div class="card">
+        <div class="card-content">
+            <span class="card-title">{{ guitar.model }}</span>
+                <p>Make: {{ guitar.make }}</p>
+                <p>Year: {{ guitar.year }}</p>
+                <p>Age: ${{ guitar.cost }}</p>
+        </div>
+      <div class="card-action">
+        <a href="{% url 'guitars_update' guitar.id %}">Edit</a>
+        <a href="{% url 'guitars_delete' guitar.id %}">Delete</a>
+      </div>
+    </div>
+  </div>
+  <div class="col s6">
+    <h6 style='text-align: center;'>Accessories for <br>{{guitar.make}} {{guitar.model}}</h6>
+    {% if guitar.accessories.count %}
+      {% for accessory in guitar.accessories.all %}
+        <div class="card">
+          <div class="card-content">
+            <span class="card-title">
+              <span style='text-align: center;'>{{accessory.name}}</span>
+            </span>
+          </div>
+        </div>
+      {% endfor %}
+      
+    {% else %}
+      <h5 style='text-align: center;'>No Accessories</h5>
+    {% endif %}
+    <h3>Available Accessories</h3>
+    {% if accessories.count %}
+      {% for accessory in accessories.all %}
+        <div class="card">
+          <div class="card-content">
+            <span class="card-title">
+              <span style='text-align: center;'>{{accessory.name}}</span>
+            </span>
+          </div>
+          <div class="card-action">
+            <form action="{% url 'assoc_accessory' guitar.id accessory.id %}" method="POST">
+              {% csrf_token %}
+              <button type="submit" class="btn">Add</button>
+            </form>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <h5>{{guitar.make}} {{guitar.model}} Already Has All Accessories Available</h5>
+    {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- This is all new markup to be added just above the <script> tag -->
+<hr>
+
+
+
+<script>
+  {% comment %} const dateEl = document.getElementById('id_date');
+  M.Datepicker.init(dateEl, {
+    format: 'yyyy-mm-dd',
+    defaultDate: new Date(),
+    setDefaultDate: true,
+    autoClose: true
+  }); {% endcomment %}
+
+
+</script>
+
+{% endblock %}
