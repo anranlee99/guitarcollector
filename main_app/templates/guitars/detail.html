@@ -18,60 +18,83 @@
       </div>
     </div>
   </div>
+  
+  
+</div>
+<div class="col s6">
+  <h6 style='text-align: center;'>Accessories for <br>{{guitar.make}} {{guitar.model}}</h6>
+  {% if guitar.accessories.count %}
+    {% for accessory in guitar.accessories.all %}
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">
+            <span style='text-align: center;'>{{accessory.name}}</span>
+          </span>
+        </div>
+      </div>
+    {% endfor %}
+    
+  {% else %}
+    <h5 style='text-align: center;'>No Accessories</h5>
+  {% endif %}
+  <h3>Available Accessories</h3>
+  {% if accessories.count %}
+    {% for accessory in accessories.all %}
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">
+            <span style='text-align: center;'>{{accessory.name}}</span>
+          </span>
+        </div>
+        <div class="card-action">
+          <form action="{% url 'assoc_accessory' guitar.id accessory.id %}" method="POST">
+            {% csrf_token %}
+            <button type="submit" class="btn">Add</button>
+          </form>
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <h5>{{guitar.make}} {{guitar.model}} Already Has All Accessories Available</h5>
+  {% endif %}
+  </div>
   <div class="col s6">
-    <h6 style='text-align: center;'>Accessories for <br>{{guitar.make}} {{guitar.model}}</h6>
-    {% if guitar.accessories.count %}
-      {% for accessory in guitar.accessories.all %}
-        <div class="card">
-          <div class="card-content">
-            <span class="card-title">
-              <span style='text-align: center;'>{{accessory.name}}</span>
-            </span>
-          </div>
-        </div>
-      {% endfor %}
-      
-    {% else %}
-      <h5 style='text-align: center;'>No Accessories</h5>
-    {% endif %}
-    <h3>Available Accessories</h3>
-    {% if accessories.count %}
-      {% for accessory in accessories.all %}
-        <div class="card">
-          <div class="card-content">
-            <span class="card-title">
-              <span style='text-align: center;'>{{accessory.name}}</span>
-            </span>
-          </div>
-          <div class="card-action">
-            <form action="{% url 'assoc_accessory' guitar.id accessory.id %}" method="POST">
-              {% csrf_token %}
-              <button type="submit" class="btn">Add</button>
-            </form>
-          </div>
-        </div>
-      {% endfor %}
-    {% else %}
-      <h5>{{guitar.make}} {{guitar.model}} Already Has All Accessories Available</h5>
-    {% endif %}
-    </div>
+    <form action="{% url 'add_servicing' guitar.id %}" method="POST">
+      {% csrf_token %}
+      {{ servicing_form.as_p }}
+      <button class="btn" type="submit">Add Service Record</button>
+    </form>
+    <br>
+    <table class="striped">
+      <thead>
+        <tr><th>Date</th><th>Service Type</th></tr>
+      </thead>
+      <tbody>
+        {% for service in guitar.servicing_set.all %}
+          <tr>
+            <td>{{service.date}}</td>
+            <td>{{service.get_service_display}}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
 </div>
-
 <!-- This is all new markup to be added just above the <script> tag -->
 <hr>
 
 
 
 <script>
-  {% comment %} const dateEl = document.getElementById('id_date');
+const dateEl = document.getElementById('id_date');
   M.Datepicker.init(dateEl, {
     format: 'yyyy-mm-dd',
     defaultDate: new Date(),
     setDefaultDate: true,
     autoClose: true
-  }); {% endcomment %}
-
+  });
+  const selectEl = document.getElementById('id_service');
+  M.FormSelect.init(selectEl);
 
 </script>
 
